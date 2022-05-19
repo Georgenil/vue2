@@ -79,7 +79,7 @@
             </div>
             <div class="item">
               <v-text-field
-                v-model="product.Name"
+                v-model="product.name"
                 single-line
                 outlined
                 style="border-radius: 10px"
@@ -97,7 +97,7 @@
             <div class="item">
               <v-select
                 v-model="product.SupplierId"
-                :items="supplier"
+                :items="suppliers"
                 item-text="name"
                 item-value="id"
                 single-line
@@ -363,7 +363,7 @@ export default {
     apiService: new ApiService(),
     isEditing: false,
     loading: false,
-    supplier: [],
+    suppliers: [],
     dialog: false,
     fileType: null,
     fileData: null,
@@ -388,8 +388,8 @@ export default {
     // },
     // directives: { money: VMoney },
   }),
-  created() {
-    
+  async created() {
+    await this.getSupplier();
   },
   methods: {
     async download() {},
@@ -411,18 +411,18 @@ export default {
 
     async getSupplier() {
       await this.apiService
-        .get("Supplier/List")
+        .get("Supplier/List-Suppliers")
         .then((response) => {
-          this.supplier = response.content;
+          this.suppliers = response.content;
         })
-        .catch((err) => {
-          this.errorMessage = err.body.message;
-          this.error = true;
+        // .catch((err) => {
+        //   this.errorMessage = err.body.message;
+        //   this.error = true;
 
-          setTimeout(() => {
-            this.error = false;
-          }, 4000);
-        });
+        //   setTimeout(() => {
+        //     this.error = false;
+        //   }, 4000);
+        // });
     },
     async getCoin() {
       await this.apiService
