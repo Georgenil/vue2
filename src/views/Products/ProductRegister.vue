@@ -46,7 +46,6 @@
               :loading="loading"
               outlined
               prepend-icon=""
-
               class="primary-input"
             >
             </v-file-input>
@@ -96,7 +95,7 @@
             </div>
             <div class="item">
               <v-select
-                v-model="product.SupplierId"
+                v-model="product.supplierId"
                 :items="suppliers"
                 item-text="name"
                 item-value="id"
@@ -129,17 +128,17 @@
       <div class="payment-type">
         <label class="container">
           Boleto
-          <input type="radio" value="1" v-model="product.Payment" />
+          <input type="radio" value="1" v-model="product.payment" />
           <span class="checkmark"></span>
         </label>
         <label class="container">
           Cartão de Débito
-          <input type="radio" value="2" v-model="product.Payment" />
+          <input type="radio" value="2" v-model="product.payment" />
           <span class="checkmark"></span>
         </label>
         <label class="container">
           Cartão de Crédito
-          <input type="radio" value="3" v-model="product.Payment" />
+          <input type="radio" value="3" v-model="product.payment" />
           <span class="checkmark"></span>
         </label>
       </div>
@@ -171,11 +170,11 @@
               </div>
               <div class="item">
                 <v-text-field
-                  v-model="product.Installments"
+                  v-model="product.installments"
                   single-line
                   outlined
                   style="border-radius: 10px"
-                  placeholder="0,0"
+                  placeholder="0"
                 ></v-text-field>
               </div>
             </div>
@@ -186,7 +185,7 @@
               </div>
               <div class="item">
                 <v-text-field
-                  v-model="product.Discont"
+                  v-model="product.discont"
                   single-line
                   outlined
                   style="border-radius: 10px"
@@ -203,7 +202,7 @@
               </div>
               <div class="item">
                 <v-text-field
-                  v-model="product.Tariff"
+                  v-model="product.tariff"
                   single-line
                   outlined
                   style="border-radius: 10px"
@@ -218,7 +217,7 @@
               </div>
               <div class="item">
                 <v-text-field
-                  v-model="product.MinimumDay"
+                  v-model="product.deliveryTime"
                   single-line
                   outlined
                   style="border-radius: 10px"
@@ -242,7 +241,7 @@
           </div>
           <div class="text-area">
             <v-textarea
-              v-model="product.QuoteObservation"
+              v-model="product.quoteObservation"
               outlined
               style="border-radius: 10px"
               placeholder="Digite aqui"
@@ -255,7 +254,7 @@
           </div>
           <div class="text-area">
             <v-textarea
-              v-model="product.BuyObservation"
+              v-model="product.buyObservation"
               outlined
               style="border-radius: 10px"
               placeholder="Digite aqui"
@@ -263,86 +262,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="sub-title-observing">
-        <span>Adicionais para bolo: </span>
-      </div>
-
-      <div class="form-observing">
-        <div class="header-form">
-          <div class="name">
-            <span>Idade de</span>
-          </div>
-          <div class="name">
-            <span>Idade até</span>
-          </div>
-          <div class="name">
-            <span>Percentual</span>
-          </div>
-          <div class="name">
-            <span>Tipo</span>
-          </div>
-        </div>
-
-        <div class="body-form">
-          <div class="line-body" v-for="(item, i) in travelers" :key="i">
-            <div class="item-line">
-              <label>Idade de</label>
-              <v-text-field
-                v-model="item.minimumAge"
-                single-line
-                outlined
-                dense
-                style="border-radius: 10px"
-                placeholder="0"
-              ></v-text-field>
-            </div>
-            <div class="item-line">
-              <label>Idade até</label>
-              <v-text-field
-                v-model="item.maximumAge"
-                single-line
-                outlined
-                dense
-                style="border-radius: 10px"
-                placeholder="0"
-              ></v-text-field>
-            </div>
-            <div class="item-line">
-              <label>Percentual</label>
-              <v-text-field
-                v-model="item.percentage"
-                single-line
-                outlined
-                dense
-                style="border-radius: 10px"
-                placeholder="0,0"
-              ></v-text-field>
-            </div>
-            <div class="item-line">
-              <label>Tipo</label>
-              <v-select
-                v-model="item.type"
-                :key="i"
-                :items="paymentTypes"
-                single-line
-                outlined
-                dense
-                style="border-radius: 10px"
-                placeholder="Selecione"
-                append-icon="mdi-chevron-down"
-              ></v-select>
-            </div>
-          </div>
-          <div class="btn-toppings">
-            <v-btn depressed class="btn mr-2" large @click="addNewTraveler()">
-              Incluir
-            </v-btn>
-            <v-btn depressed class="btn" large @click="deleteLastTraveler()">
-              Excluir
-            </v-btn>
-          </div>
-        </div>
-      </div> -->
       <div class="btn-toppings">
         <v-btn depressed class="btn" large @click="openAndCloseDialog">
           Incluir Fotos
@@ -371,22 +290,20 @@ export default {
     UploadDocument: {},
     product: {
       name: "",
-      price: 0,
+      price: 0.0,
       payment: 0,
-      quoteObservation:"",
-      buyObservation:"",
-      status:true,
-      uploadDocument:{},
-      supplier:{},
+      deliveryTime: 0,
+      installments: 0,
+      discont: 0.0,
+      tariff: 0.0,
+      quoteObservation: "",
+      buyObservation: "",
+      status: true,
+      uploadDocument: {},
+      supplierId: null,
+      supplier: {},
     },
-    // money: {
-    //   decimal: ",",
-    //   thousands: ".",
-    //   prefix: "R$",
-    //   precision: 2,
-    //   masked: false,
-    // },
-    // directives: { money: VMoney },
+
   }),
   async created() {
     await this.getSupplier();
@@ -410,78 +327,22 @@ export default {
     },
 
     async getSupplier() {
-      await this.apiService
-        .get("Supplier/List-Suppliers")
-        .then((response) => {
-          this.suppliers = response.content;
-        })
-        // .catch((err) => {
-        //   this.errorMessage = err.body.message;
-        //   this.error = true;
+      await this.apiService.get("Supplier/List-Suppliers").then((response) => {
+        this.suppliers = response.content;
+      });
+      // .catch((err) => {
+      //   this.errorMessage = err.body.message;
+      //   this.error = true;
 
-        //   setTimeout(() => {
-        //     this.error = false;
-        //   }, 4000);
-        // });
-    },
-    async getCoin() {
-      await this.apiService
-        .get("Coin/List-Coins")
-        .then((response) => {
-          this.coins = response.content;
-        })
-        .catch((err) => {
-          this.errorMessage = err.body.message;
-          this.error = true;
-
-          setTimeout(() => {
-            this.error = false;
-          }, 4000);
-        });
-    },
-    async getDestination() {
-      await this.apiService
-        .get("Destination/List-Destinations")
-        .then((response) => (this.destinations = response.content))
-        .catch((err) => {
-          this.errorMessage = err.body.message;
-          this.error = true;
-
-          setTimeout(() => {
-            this.error = false;
-          }, 4000);
-        });
-    },
-    async getTraveler() {
-      await this.apiService
-        .get("Traveler/list")
-        .then(
-          (response) => (this.product.TravelerModificators = response.content)
-        )
-        .catch((err) => {
-          this.errorMessage = err.body.message;
-          this.error = true;
-
-          setTimeout(() => {
-            this.error = false;
-          }, 4000);
-        });
+      //   setTimeout(() => {
+      //     this.error = false;
+      //   }, 4000);
+      // });
     },
     openAndCloseDialog() {
       this.dialog == true ? (this.dialog = false) : (this.dialog = true);
     },
     async submit() {
-      const travelersResult = this.travelers.filter((x) => {
-        return x.minimumAge || x.maximumAge || x.percentage || x.type;
-      });
-      travelersResult.map((x) => {
-        x.type = this.paymentTypes.indexOf(x.type);
-      });
-
-      this.fillDestination();
-
-      this.product.TravelerModificators = travelersResult;
-
       const document = {
         Id: this.currentDocument != null ? this.currentDocument.id : null,
         FileName: this.currentDocument.name,
@@ -489,51 +350,34 @@ export default {
         Size: this.currentDocument.size,
         File: this.fileData,
       };
-      this.product.UploadDocument = document;
+      this.product.uploadDocument = document;
 
-      this.coverageSelected = this.coverageTypes.map((x) => {
-        if (x.coinId != 0) {
-          return x;
-        }
-      });
       const product = {
-        Name: this.product.Name,
-        Payment: this.product.Payment,
-        Excharge: this.product.Excharge,
-        Installments: this.product.Installments,
-        MinimumDay: this.product.MinimumDay,
-        MaximumDay: this.product.MaximumDay,
-        DayPrice: this.product.DayPrice,
-        Discont: this.product.Discont,
-        Tariff: this.product.Tariff,
-        QuoteObservation: this.product.QuoteObservation,
-        BuyObservation: this.product.BuyObservation,
-        SupplierId: this.product.SupplierId,
-        OriginId: this.product.OriginId,
-        Coverages: this.coverageSelected,
-        TravelerModificators: this.product.TravelerModificators,
-        Destinations: this.product.Destinations,
+        Name: this.product.name,
+        Price: this.product.price,
+        Payment: this.product.payment,
+        Installments: this.product.installments,
+        DeliveryTime: this.product.deliveryTime,
+        Discont: this.product.discont,
+        Tariff: this.product.tariff,
+        QuoteObservation: this.product.quoteObservation,
+        BuyObservation: this.product.buyObservation,
+        SupplierId: this.product.supplierId,
         Status: true,
-        UploadDocument: this.product.UploadDocument,
+        UploadDocument: this.product.uploadDocument,
       };
-
-      await this.apiService.post("Product/Add", product).then((response) => {
-        if (response.content.statusCode == 200) {
-          this.loading = false;
-          this.$toast.success("Produto cadastrado com sucesso");
-          this.product = {};
-        }
-        // this.$refs.form.reset();
-      });
-    },
-    fillDestination() {
-      for (let i = 0; i < this.destinationsSelected.length; i++) {
-        if (this.destinationsSelected[i] == true) {
-          this.product.Destinations.push({
-            destinationId: this.destinations[i].id,
-          });
-        }
-      }
+      console.log(product);
+      await this.apiService
+        .post("Product/Add-Product", product)
+        .then((response) => {
+          if (response.content.statusCode == 200) {
+            this.loading = false;
+            this.$toast.success("Produto cadastrado com sucesso");
+            this.product = {};
+            this.$route.push("/");
+          }
+          // this.$refs.form.reset();
+        });
     },
   },
 };

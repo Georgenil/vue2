@@ -50,7 +50,7 @@ export default {
     drawer: null,
     items: [
       { title: "Lista de produtos", icon: "mdi-view-dashboard", to: "/" },
-      { title: "Cadastro de produtos", icon: "mdi-image", to: "/about" },
+      { title: "Cadastro de produtos", icon: "mdi-image", to: "/productRegister" },
     ],
     right: null,
   }),

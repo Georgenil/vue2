@@ -82,7 +82,6 @@ export default class ApiService {
       const store = this.getStore();
 
       var environment = process.env.VUE_APP_BASE_URL;
-      console.log(`${environment}${url}`);
       store.commit("loader/START_LOADING", event);
       Vue.http({
         method: method,
