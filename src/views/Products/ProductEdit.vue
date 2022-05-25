@@ -1,70 +1,5 @@
 <template>
   <v-card class="card">
-    <v-dialog v-model="dialog" width="690">
-      <v-card class="card-dialog">
-        <figure class="close-btn">
-          <img
-            src="/imgs/icons/close-icon.svg"
-            alt="Botão fechar"
-            @click="openAndCloseDialog"
-          />
-        </figure>
-        <div class="title-card-dialog">
-          <span>Incluir Fotos</span>
-        </div>
-        <div class="bar-archive">
-          <!-- <label
-            >Arquivo
-
-            <div class="input">
-              <input
-                type="text"
-                @click="download()"
-                placeholder="Selecione um arquivo"
-                readonly
-              />
-              <div class="button-dowload">
-                <img src="/imgs/icons/download.svg" alt="Download" />
-              </div>
-            </div>
-          </label> -->
-
-          <label>
-            <div class="button-item">
-              <img src="/imgs/icons/download.svg" alt="Ícone" />
-            </div>
-            <v-file-input
-              show-size
-              v-model="currentDocument"
-              :rules="[
-                (v) =>
-                  (v && v.size < 2000000) ||
-                  'Tamanho máximo permitido é de 2 MB',
-              ]"
-              name="file"
-              accept=".jpeg"
-              :loading="loading"
-              outlined
-              prepend-icon=""
-              class="primary-input"
-            >
-            </v-file-input>
-          </label>
-        </div>
-
-        <div class="actions">
-          <button class="delete" @click="remove(currentDocument)">
-            <span>Deletar</span>
-          </button>
-          <button v-if="isEditing == true" class="download">
-            <span>Baixar</span>
-          </button>
-          <button class="download" @click="importDocument()">
-            <span>Enviar</span>
-          </button>
-        </div>
-      </v-card>
-    </v-dialog>
     <section class="data-main-plan">
       <div class="title">
         <span> Dados dos produtos</span>
@@ -262,8 +197,9 @@
         </div>
       </div>
       <div class="btn-toppings">
-        <v-btn depressed class="btn" large @click="openAndCloseDialog">
-          Incluir Fotos
+        <v-btn color="#00508c" dark @click="openFile()">
+          <span class="mr-2">Visualiar foto </span>
+          <v-icon dark> mdi-open-in-new </v-icon>
         </v-btn>
       </div>
     </section>
@@ -277,6 +213,9 @@
 <script>
 import ApiService from "../../services/ApiService";
 export default {
+    props: {
+    productId: String,
+  },
   data: () => ({
     apiService: new ApiService(),
     isEditing: false,
@@ -287,31 +226,45 @@ export default {
     fileData: null,
     currentDocument: null,
     UploadDocument: {},
-    product: {
-      name: "",
-      price: 0.0,
-      payment: 0,
-      deliveryTime: 0,
-      installments: 0,
-      discont: 0.0,
-      tariff: 0.0,
-      quoteObservation: "",
-      buyObservation: "",
-      status: true,
-      uploadDocument: {},
-      supplierId: null,
-      supplier: {},
-    },
-
+    product: {},
   }),
   async created() {
-    await this.getSupplier();
+    if (this.$route.params.productId) {
+      await this.getProductById(this.$route.params.productId);
+      await this.getSupplier();
+    }
   },
   methods: {
-    menseger(){
-     return this.$toast.success("Produto editado com sucesso!")
+    async openFile() {
+      const uploadDocumentId = this.product.uploadDocument.id;
+      await this.apiService
+        .post(`Product/Get-Document/${uploadDocumentId}`)
+        .then((response) => {
+          const fileWindow = window.open();
+          const url = "data:application/jpg;base64," + response.content;
+
+          fileWindow.document.write(
+            `<html>
+              <title>${this.product.uploadDocument.fileName}.${
+              this.product.uploadDocument.fileType
+            }</title>
+              <body style:"overflow: hidden; margin: 0">
+                <object width="100%" width="-webkit-fill-available" height="100%" height="-webkit-fill-available" type="application/pdf" data="${encodeURI(
+                  url
+                )}"></object>
+              </body>
+            </html>`
+          );
+        })
+        .catch((err) => {
+          this.errorMessage = err.body.message;
+          this.error = true;
+
+          setTimeout(() => {
+            this.error = false;
+          }, 4000);
+        });
     },
-    async download() {},
     importDocument() {
       const formateTypeDocument = this.currentDocument.name.lastIndexOf(".");
       this.fileType = this.currentDocument.name.substr(formateTypeDocument);
@@ -327,7 +280,14 @@ export default {
       this.currentDocument = {};
       this.loading = false;
     },
-
+    async getProductById(productId) {
+      await this.apiService
+        .post(`Product/Get-product/${productId}`)
+        .then((response) => {
+          this.isEditing = true;
+          this.product = response.content;
+        });
+    },
     async getSupplier() {
       await this.apiService.get("Supplier/List-Suppliers").then((response) => {
         this.suppliers = response.content;
@@ -345,16 +305,8 @@ export default {
       this.dialog == true ? (this.dialog = false) : (this.dialog = true);
     },
     async submit() {
-      const document = {
-        Id: this.currentDocument != null ? this.currentDocument.id : null,
-        FileName: this.currentDocument.name,
-        FileType: this.fileType,
-        Size: this.currentDocument.size,
-        File: this.fileData,
-      };
-      this.product.uploadDocument = document;
-
       const product = {
+        Id: this.productId,
         Name: this.product.name,
         Price: this.product.price,
         Payment: this.product.payment,
@@ -369,15 +321,14 @@ export default {
         UploadDocument: this.product.uploadDocument,
       };
       await this.apiService
-        .post("Product/Add-Product", product)
+        .put("Product/Edit-Product", product)
         .then((response) => {
-          if (response.content.statusCode == 200) {
+          console.log(response.statusCode)
+          if (response.statusCode == 200) {
             this.loading = false;
-            this.$toast.success("Produto cadastrado com sucesso");
-            this.product = {};
-            this.$route.push("/");
+            this.$emit('mensager');
+            this.$router.push("/");
           }
-          // this.$refs.form.reset();
         });
     },
   },
