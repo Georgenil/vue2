@@ -1,4 +1,6 @@
-# vue2
+# GERENCIAMENTO DE PRODUTOS
+
+## É preciso baixar o projeto apiVue para que este funcione devidamente, com todas as rotas já definidas.
 
 ## Project setup
 ```
